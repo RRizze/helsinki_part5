@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import BlogForm from './BlogForm';
 
 describe('<BlogForm/>', () => {
-
   test('form udates parent state and calls onSubmit', async () => {
     const user = userEvent.setup();
 
@@ -23,7 +22,6 @@ describe('<BlogForm/>', () => {
         //handleBlogUrlChange={handleBlogUrlChange}
       />
     ).container;
-
 
     const inputTitle = container.querySelector('#blog-title-input');
     const inputAuthor = container.querySelector('#blog-author-input');

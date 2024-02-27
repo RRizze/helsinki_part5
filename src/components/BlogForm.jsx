@@ -33,7 +33,7 @@ const BlogForm = ({ addBlog }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} >
+    <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor='blog-title-input'>title:</label>
         <input
@@ -66,7 +66,9 @@ const BlogForm = ({ addBlog }) => {
           onChange={handleUrlChange}
         />
       </div>
-      <button id='add-blog' type='submit'>add blog</button>
+      <button id='add-blog' type='submit'>
+        add blog
+      </button>
     </form>
   );
 };

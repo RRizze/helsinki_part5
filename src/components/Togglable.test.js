@@ -5,19 +5,15 @@ import userEvent from '@testing-library/user-event';
 import Togglable from './Togglable';
 
 describe('<Togglable />', () => {
-
   let container;
 
   beforeEach(() => {
     container = render(
       <Togglable buttonLabel='show...'>
-        <div className='testDiv'>
-          togglable content
-        </div>
+        <div className='testDiv'>togglable content</div>
       </Togglable>
     ).container;
   });
-
 
   test('renders its children', async () => {
     await screen.findAllByText('togglable content');

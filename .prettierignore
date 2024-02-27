@@ -1,0 +1,10 @@
+build
+coverage
+node_modules
+cypress
+public
+.babelrc
+.eslintrc*
+README.*
+cypress.config.*
+vite.config.*

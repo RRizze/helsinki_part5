@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Blog from './Blog';
 
-
 describe('<Blog />', () => {
   let blog;
 
@@ -29,26 +28,20 @@ describe('<Blog />', () => {
     expect(element).toBeDefined();
   });
 
-  test(
-    'clicking the button "like" twice calls event handler "handleAddLike" twice',
-    async () => {
-      const mockHandler = jest.fn();
+  test('clicking the button "like" twice calls event handler "handleAddLike" twice', async () => {
+    const mockHandler = jest.fn();
 
-      render(
-        <Blog blog={blog} userId='1' handleAddLike={mockHandler} />
-      );
+    render(<Blog blog={blog} userId='1' handleAddLike={mockHandler} />);
 
-      const user = userEvent.setup();
-      const button = screen.getByText('like');
-      await user.click(button);
-      await user.click(button);
+    const user = userEvent.setup();
+    const button = screen.getByText('like');
+    await user.click(button);
+    await user.click(button);
 
-      expect(mockHandler.mock.calls).toHaveLength(2);
-    }
-  );
+    expect(mockHandler.mock.calls).toHaveLength(2);
+  });
 
   test('renders title and author of a blog', () => {
-
     const { container } = render(<Blog blog={blog} userId='1' />);
 
     const title = screen.getByText('Test title.');
@@ -71,6 +64,4 @@ describe('<Blog />', () => {
     await user.click(btn);
     expect(urlLikes).not.toHaveStyle('display: none');
   });
-
 });
-

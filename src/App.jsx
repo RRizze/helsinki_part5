@@ -26,11 +26,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => {
-        setBlogs(blogs.sort(sortBlogs));
-      });
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs.sort(sortBlogs));
+    });
   }, []);
 
   useEffect(() => {
@@ -42,7 +40,6 @@ const App = () => {
       blogService.setToken(userObj.token);
     }
   }, []);
-
 
   const clearErrorMessage = () => {
     setTimeout(() => {
@@ -59,9 +56,7 @@ const App = () => {
     try {
       const loggedUser = await loginService.login({ username, password });
 
-      window.localStorage.setItem(
-        'loggedBlogUser', JSON.stringify(loggedUser)
-      );
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(loggedUser));
       blogService.setToken(loggedUser.token);
       setUser(loggedUser);
       setUsername('');
@@ -73,7 +68,6 @@ const App = () => {
       });
 
       clearErrorMessage();
-
     } catch (exception) {
       setErrorMessage({
         message: 'Wrong username or password',
@@ -85,7 +79,6 @@ const App = () => {
   };
 
   const handleAddBlog = async ({ title, author, url }) => {
-
     try {
       const addedBlog = await blogService.create({
         title,
@@ -103,7 +96,6 @@ const App = () => {
       clearErrorMessage();
 
       blogFormRef.current.toggleVisibility();
-
     } catch (exception) {
       setErrorMessage({
         message: 'All fields are required',
@@ -130,14 +122,11 @@ const App = () => {
 
   const blogForm = () => {
     return (
-      <Togglable buttonLabel='New blog' ref={blogFormRef} >
-        <BlogForm
-          addBlog={handleAddBlog}
-        />
+      <Togglable buttonLabel='New blog' ref={blogFormRef}>
+        <BlogForm addBlog={handleAddBlog} />
       </Togglable>
     );
   };
-
 
   const logOut = (e) => {
     e.preventDefault();
@@ -151,9 +140,7 @@ const App = () => {
 
     const updatedBlog = await blogService.update(blog);
     const blogsFiltered = blogs.filter((blog) => {
-      return (blog.id === updatedBlog.id)
-        ? updatedBlog
-        : blog;
+      return blog.id === updatedBlog.id ? updatedBlog : blog;
     });
     setBlogs(blogsFiltered.sort(sortBlogs));
   };
@@ -161,7 +148,7 @@ const App = () => {
   const handleRemoveBlog = async ({ e, blog }) => {
     e.preventDefault();
 
-    if(window.confirm('Do you really want to delete the blog?')) {
+    if (window.confirm('Do you really want to delete the blog?')) {
       await blogService.remove(blog);
 
       const filteredBlogs = blogs.filter((b) => b.id !== blog.id);
@@ -176,15 +163,17 @@ const App = () => {
         className={errorMessage.error ? 'error' : 'success'}
       />
 
-      {!user && loginForm() }
+      {!user && loginForm()}
 
-      {user &&
+      {user && (
         <div>
           <h2>Blogs</h2>
           <p>{user.name} logged in</p>
-          <button id='logout' onClick={logOut}>logout</button>
+          <button id='logout' onClick={logOut}>
+            logout
+          </button>
           {blogForm()}
-          {blogs.map(blog =>
+          {blogs.map((blog) => (
             <Blog
               key={blog.id}
               blog={blog}
@@ -192,9 +181,9 @@ const App = () => {
               handleRemove={handleRemoveBlog}
               userId={user.id}
             />
-          )}
+          ))}
         </div>
-      }
+      )}
     </div>
   );
 };
