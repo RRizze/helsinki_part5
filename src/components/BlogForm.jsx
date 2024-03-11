@@ -1,86 +1,83 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useField } from '../hooks';
+import { createBlog } from '../reducers/blogsReducer';
+import { addNotification } from '../reducers/notificationReducer';
+import Form from '../ui/Form';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
 
-const BlogForm = ({ addBlog }) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+const BlogForm = ({}) => {
+  const dispatch = useDispatch();
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
-  };
-
-  const handleUrlChange = (e) => {
-    setUrl(e.target.value);
-  };
+  const title = useField('text');
+  const author = useField('text');
+  const url = useField('text');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    addBlog({
-      title,
-      author,
-      url,
-    });
+    dispatch(
+      createBlog({
+        title: title.value,
+        author: author.value,
+        url: url.value,
+      })
+    );
 
-    setTitle('');
-    setAuthor('');
-    setUrl('');
+    dispatch(
+      addNotification({
+        message: `a new blog ${title.value} by ${author.value} added`,
+        timeout: 3500,
+      })
+    );
+
+    title.clear();
+    author.clear();
+    url.clear();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <div>
         <label htmlFor='blog-title-input'>title:</label>
-        <input
+        <Input
           id='blog-title-input'
-          type='text'
           name='blog-title'
-          value={title}
-          onChange={handleTitleChange}
+          type={title.type}
+          value={title.value}
+          onChange={title.onChange}
+          placeholder='Blog title...'
         />
       </div>
 
       <div>
         <label htmlFor='blog-author-input'>author:</label>
-        <input
+        <Input
           id='blog-author-input'
-          type='text'
           name='blog-author'
-          value={author}
-          onChange={handleAuthorChange}
+          type={author.type}
+          value={author.value}
+          onChange={author.onChange}
+          placeholder='Blog Author...'
         />
       </div>
 
       <div>
         <label htmlFor='blog-url-input'>url:</label>
-        <input
+        <Input
           id='blog-url-input'
-          type='text'
           name='blog-url'
-          value={url}
-          onChange={handleUrlChange}
+          type={url.type}
+          value={url.value}
+          onChange={url.onChange}
+          placeholder='Blog url'
         />
       </div>
-      <button id='add-blog' type='submit'>
+      <Button id='add-blog' type='submit'>
         add blog
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
-};
-
-BlogForm.propTypes = {
-  addBlog: PropTypes.func.isRequired,
-  //blogTitle: PropTypes.string.isRequired,
-  //blogAuthor: PropTypes.string.isRequired,
-  //blogUrl: PropTypes.string.isRequired,
-  //handleBlogTitleChange: PropTypes.func.isRequired,
-  //handleBlogAuthorChange: PropTypes.func.isRequired,
-  //handleBlogUrlChange: PropTypes.func.isRequired,
 };
 
 export default BlogForm;
