@@ -185,7 +185,8 @@ li {
   padding-bottom: 10px;
 }
 
-.error, .success {
+.error,
+.success {
   display: block;
   font-size: 15px;
   padding: 1em 1.2em;

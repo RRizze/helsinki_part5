@@ -1,13 +1,15 @@
 import Button from '../ui/Button';
-import { useDispatch } from 'react-redux';
-import { logout } from '../reducers/authReducer';
 import FlexContainer from '../ui/FlexContainer';
+import { useQueryClient } from '@tanstack/react-query';
+import { removeUser } from '../services/localStorage';
 
-const UserPanel = ({ user }) => {
-  const dispatch = useDispatch();
+const UserPanel = () => {
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(['authUser']);
 
   const logOut = () => {
-    dispatch(logout());
+    removeUser();
+    queryClient.setQueryData(['authUser'], null);
   };
 
   if (!user) {

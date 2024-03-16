@@ -1,8 +1,7 @@
-import { getNotification } from '../reducers/notificationReducer';
-import { useSelector } from 'react-redux';
+import { useNotificationValue } from '../context/notificationContext';
 
 const Notification = () => {
-  const { message, error } = useSelector(getNotification);
+  const { message, error } = useNotificationValue();
   const className = error ? 'error' : 'success';
 
   if (!message) {

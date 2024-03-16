@@ -5,7 +5,6 @@ import LoginForm from './components/LoginForm';
 import Blogs from './components/Blogs';
 import Blog from './components/Blog';
 import User from './components/User';
-import { getUser, addUserFromLocalStore } from './reducers/authReducer';
 
 import {
   BrowserRouter as Router,
@@ -21,15 +20,30 @@ import MainContent from './ui/MainContent';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import UserPanel from './components/UserPanel';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { getUser } from './services/localStorage';
+
+const fetchFromLocalStore = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const user = getUser();
+      if (user) {
+        resolve(user);
+      } else {
+        reject(new Error('No user in localStorage'));
+      }
+    }, 0);
+  });
+};
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(addUserFromLocalStore());
-  }, []);
-
-  const user = useSelector(getUser);
+  // TODO: mixing localstorage and query?
+  // this is not asynchronous source of data
+  // meh need MORE libs
+  const user = useQuery({
+    queryKey: ['authUser'],
+    queryFn: fetchFromLocalStore,
+  });
 
   return (
     <FlexContainer $flexDirection='column' $height={'100vh'} $margin={'0 auto'}>
@@ -37,18 +51,18 @@ const App = () => {
 
       <Router>
         <Header>
-          {!user ? <Navigate to='/login' /> : <Navbar />}
-          <UserPanel user={user} />
+          {!user.data ? <Navigate to='/login' /> : <Navbar />}
+          <UserPanel />
         </Header>
 
         <MainContent>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/login' element={<LoginForm user={user} />} />
+            <Route path='/login' element={<LoginForm />} />
             <Route path='/blogs' element={<Blogs />} />
             <Route path='/users' element={<Users />} />
             <Route path='/users/:id' element={<User />} />
-            <Route path='/blogs/:id' element={<Blog user={user}/>} />
+            <Route path='/blogs/:id' element={<Blog />} />
           </Routes>
         </MainContent>
       </Router>

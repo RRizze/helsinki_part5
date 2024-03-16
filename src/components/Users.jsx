@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
-import usersService from '../services/users';
 import StyledLink from '../ui/StyledLink';
 import FlexContainer from '../ui/FlexContainer';
 import List from '../ui/List';
+import { useUsersData } from '../hooks/users';
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
+  const { data: users, isError, isPending } = useUsersData();
 
-  useEffect(() => {
-    async function fetchData() {
-      const data = await usersService.getUsers();
-      setUsers(data);
-    }
-    fetchData();
-  }, []);
+  if (isPending) {
+    return <div>Loading users...</div>;
+  }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
+
+  if (!users) {
+    return <div>No users</div>;
+  }
 
   return (
     <div className='users-info'>

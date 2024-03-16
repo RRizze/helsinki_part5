@@ -1,26 +1,23 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchUserById, getUser } from '../reducers/usersReducer';
 import { useParams } from 'react-router-dom';
 import StyledLink from '../ui/StyledLink';
+import { useUserData } from '../hooks/users';
 
 const User = () => {
   const id = useParams().id;
-  const dispatch = useDispatch();
+  const { data: user, isPending, isError } = useUserData(id);
 
-  const user = useSelector(getUser(id));
+  if (isPending) {
+    return <div>Loading user...</div>;
+  }
 
-  useEffect(() => {
-    if (!user) {
-      dispatch(fetchUserById(id));
-    }
-  }, []);
+  if (isError) {
+    return <div>There is no user</div>;
+  }
 
   if (!user) {
     return <div>No user</div>;
   }
 
-  // TODO: add route to blog
   return (
     <div className='user'>
       <h2>{user.username}</h2>

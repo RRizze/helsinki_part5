@@ -1,20 +1,16 @@
-import { getAllBlogs, fetchAllBlogs } from '../reducers/blogsReducer';
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import StyledLink from '../ui/StyledLink';
 import BlogForm from './BlogForm';
+import { useBlogsData } from '../hooks/blogs';
 
 const Blogs = () => {
-  const dispatch = useDispatch();
+  const { data: blogs, isPending, isError } = useBlogsData();
 
-  useEffect(() => {
-    dispatch(fetchAllBlogs());
-  }, []);
+  if (isPending) {
+    return <div>...loading blogs</div>;
+  }
 
-  const blogs = useSelector(getAllBlogs);
-
-  if (blogs.length < 0) {
-    return <div>No blogs are created</div>;
+  if (isError) {
+    return <div>something went wrong...</div>;
   }
 
   return (
@@ -22,7 +18,7 @@ const Blogs = () => {
       <h2>Blogs</h2>
       <BlogForm />
       <ul>
-        {blogs.map((blog) => (
+        {blogs?.map((blog) => (
           <li key={blog.id}>
             <StyledLink to={`/blogs/${blog.id}`}>{blog.title}</StyledLink>
           </li>

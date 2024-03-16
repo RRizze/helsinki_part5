@@ -1,35 +1,67 @@
-import { useDispatch } from 'react-redux';
 import { useField } from '../hooks';
-import { createBlog } from '../reducers/blogsReducer';
-import { addNotification } from '../reducers/notificationReducer';
 import Form from '../ui/Form';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import blogsService from '../services/blogs';
+import { useNotificationDispatch } from '../context/notificationContext';
 
-const BlogForm = ({}) => {
-  const dispatch = useDispatch();
-
+const BlogForm = () => {
   const title = useField('text');
   const author = useField('text');
   const url = useField('text');
 
+  const queryClient = useQueryClient();
+  const dispatchNotification = useNotificationDispatch();
+
+  const { mutate: blogCreate } = useMutation({
+    mutationKey: ['blogs'],
+    mutationFn: blogsService.create,
+    onSuccess: (newBlog) => {
+      queryClient.setQueryData(['blogs'], (oldBlogs) => {
+        return [...(oldBlogs || []), newBlog];
+      });
+      dispatchNotification({
+        type: 'ADD',
+        payload: {
+          message: 'New blog was added!',
+          error: false,
+        },
+      });
+      setTimeout(() => {
+        dispatchNotification({ type: 'REMOVE' });
+      }, 2500);
+    },
+    onError: (err) => {
+      dispatchNotification({
+        type: 'ADD',
+        payload: {
+          message: err.response.data.error,
+          error: true,
+        },
+      });
+      setTimeout(() => {
+        dispatchNotification({ type: 'REMOVE' });
+      }, 2500);
+    },
+    refetchOnWindowFocus: false,
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(
-      createBlog({
-        title: title.value,
-        author: author.value,
-        url: url.value,
-      })
-    );
+    blogCreate({
+      title: title.value,
+      author: author.value,
+      url: url.value,
+    });
 
-    dispatch(
-      addNotification({
-        message: `a new blog ${title.value} by ${author.value} added`,
-        timeout: 3500,
-      })
-    );
+    //dispatch(
+    //  addNotification({
+    //    message: `a new blog ${title.value} by ${author.value} added`,
+    //    timeout: 3500,
+    //  })
+    //);
 
     title.clear();
     author.clear();

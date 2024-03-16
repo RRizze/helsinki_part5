@@ -1,10 +1,9 @@
 import axios from 'axios';
+import { getUser } from './localStorage';
 const baseUrl = 'http://localhost:3002/api/blogs';
 
-let token = null;
-
-const setToken = (newToken) => {
-  token = `Bearer ${newToken}`;
+const getToken = () => {
+  return `Bearer ${getUser().token}`;
 };
 
 const getAll = async () => {
@@ -20,7 +19,7 @@ const getBlogById = async (id) => {
 const create = async ({ title, author, url }) => {
   const config = {
     headers: {
-      Authorization: token,
+      Authorization: getToken(),
     },
   };
   const res = await axios.post(baseUrl, { title, author, url }, config);
@@ -30,7 +29,7 @@ const create = async ({ title, author, url }) => {
 const update = async (updatedBlog) => {
   const config = {
     headers: {
-      Authorization: token,
+      Authorization: getToken(),
     },
   };
 
@@ -47,7 +46,7 @@ const update = async (updatedBlog) => {
 const remove = async (blog) => {
   const config = {
     headers: {
-      Authorization: token,
+      Authorization: getToken(),
     },
   };
 
@@ -61,7 +60,6 @@ const addComment = async (blogId, comment) => {
 
 export default {
   getAll,
-  setToken,
   create,
   update,
   remove,
